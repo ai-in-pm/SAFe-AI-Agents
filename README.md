@@ -74,6 +74,12 @@ This project simulates the implementation of the Scaled Agile Framework (SAFe) u
 - `templates/` - HTML templates
 - `static/` - CSS and JavaScript files
 
+## Output
+![screencapture-127-0-0-1-56313-2025-03-15-15_49_08](https://github.com/user-attachments/assets/00f12472-e794-40ce-ac06-c01f577e831d)
+![screencapture-127-0-0-1-56313-2025-03-15-15_49_54](https://github.com/user-attachments/assets/363e4194-792b-4d83-bbb0-ead26b5c4cd8)
+![screencapture-127-0-0-1-56313-2025-03-15-15_50_14](https://github.com/user-attachments/assets/e708c2b4-b1f9-4eff-8924-d901f2c654ee)
+
+
 ## Requirements
 
 See `requirements.txt` for a complete list of dependencies.
