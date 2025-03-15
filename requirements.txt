@@ -1,0 +1,7 @@
+python-dotenv==1.0.1
+openai==1.66.3
+anthropic==0.49.0
+google-generativeai==0.8.4
+flask==2.3.3
+flask-socketio==5.3.6
+markdown==3.5.2

@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAFe AI Agents Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <i class="bi bi-kanban"></i> SAFe AI Agents Simulation
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="nav-setup">Setup</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="nav-simulation">Simulation</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="nav-communication">Communications</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="nav-events">Event Log</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="row">
+            <!-- Sidebar with Simulation Controls -->
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="bi bi-gear-fill"></i> Simulation Controls</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="status-panel" class="mb-3 p-2 bg-light rounded">
+                            <h6>Status</h6>
+                            <div id="simulation-status">Not initialized</div>
+                        </div>
+                        
+                        <!-- Setup Form -->
+                        <div id="setup-form">
+                            <h6>Initialize Simulation</h6>
+                            <form id="init-form" class="mb-3">
+                                <div class="mb-2">
+                                    <label for="project-name" class="form-label">Project Name</label>
+                                    <input type="text" class="form-control" id="project-name" value="SAFe Demo Project">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="configuration" class="form-label">SAFe Configuration</label>
+                                    <select class="form-select" id="configuration">
+                                        <option value="essential" selected>Essential SAFe</option>
+                                        <option value="portfolio">Portfolio SAFe</option>
+                                        <option value="full">Full SAFe</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2 form-check">
+                                    <input type="checkbox" class="form-check-input" id="use-sample-backlog" checked>
+                                    <label class="form-check-label" for="use-sample-backlog">Use sample backlog</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Initialize</button>
+                            </form>
+                        </div>
+                        
+                        <!-- PI Controls -->
+                        <div id="pi-controls" class="mb-3 d-none">
+                            <h6>Program Increment</h6>
+                            <button id="start-pi" class="btn btn-outline-primary btn-sm w-100 mb-2">Start New PI</button>
+                            <button id="end-pi" class="btn btn-outline-danger btn-sm w-100 mb-2">End Current PI</button>
+                        </div>
+                        
+                        <!-- Sprint Controls -->
+                        <div id="sprint-controls" class="mb-3 d-none">
+                            <h6>Sprint</h6>
+                            <button id="start-sprint" class="btn btn-outline-primary btn-sm w-100 mb-2">Start New Sprint</button>
+                            <button id="run-standup" class="btn btn-outline-secondary btn-sm w-100 mb-2">Run Daily Standup</button>
+                            <button id="end-sprint" class="btn btn-outline-danger btn-sm w-100 mb-2">End Current Sprint</button>
+                        </div>
+                        
+                        <!-- Change Request -->
+                        <div id="change-request-controls" class="mb-3 d-none">
+                            <h6>Submit Change Request</h6>
+                            <form id="change-request-form">
+                                <div class="mb-2">
+                                    <input type="text" class="form-control" id="change-description" placeholder="Change description">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="change-priority" class="form-label">Priority (1-10)</label>
+                                    <input type="number" class="form-control" id="change-priority" min="1" max="10" value="5">
+                                </div>
+                                <div class="mb-2 form-check">
+                                    <input type="checkbox" class="form-check-input" id="change-strategic">
+                                    <label class="form-check-label" for="change-strategic">Strategic Change</label>
+                                </div>
+                                <button type="submit" class="btn btn-warning btn-sm w-100">Submit Change</button>
+                            </form>
+                        </div>
+                        
+                        <!-- Technical Input -->
+                        <div id="technical-input-controls" class="mb-3 d-none">
+                            <h6>Technical Guidance</h6>
+                            <form id="technical-input-form">
+                                <div class="mb-2">
+                                    <input type="text" class="form-control" id="technical-topic" placeholder="Technical topic or question">
+                                </div>
+                                <button type="submit" class="btn btn-info btn-sm w-100">Get Guidance</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="col-md-9">
+                <!-- Setup Panel -->
+                <div id="setup-panel" class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="bi bi-tools"></i> Project Setup</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <p>This simulation demonstrates the Scaled Agile Framework (SAFe) implementation with three AI agents:</p>
+                            <ul>
+                                <li><strong>SAFe Coach</strong>: Guides overall process, facilitates PI Planning and Inspect & Adapt workshops</li>
+                                <li><strong>Scrum Master</strong>: Manages team-level ceremonies, removes impediments</li>
+                                <li><strong>Developer</strong>: Provides technical expertise, estimates and implements user stories</li>
+                            </ul>
+                            <p>To begin, initialize the simulation with your preferred configuration.</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-info text-white">Essential SAFe</div>
+                                    <div class="card-body">
+                                        <ul>
+                                            <li>Team and Program levels</li>
+                                            <li>PI Planning</li>
+                                            <li>Agile teams</li>
+                                            <li>System Demo</li>
+                                            <li>Inspect and Adapt</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-success text-white">Portfolio SAFe</div>
+                                    <div class="card-body">
+                                        <ul>
+                                            <li>Everything in Essential</li>
+                                            <li>Strategic themes</li>
+                                            <li>Portfolio vision</li>
+                                            <li>Portfolio backlog</li>
+                                            <li>Epic owners</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-warning text-dark">Full SAFe</div>
+                                    <div class="card-body">
+                                        <ul>
+                                            <li>Everything in Portfolio</li>
+                                            <li>Solution layer</li>
+                                            <li>Multiple ARTs</li>
+                                            <li>Solution management</li>
+                                            <li>Economic framework</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Simulation Panel -->
+                <div id="simulation-panel" class="card mb-4 d-none">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="bi bi-play-circle"></i> Simulation Progress</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header bg-primary text-white">Program Increment</div>
+                                    <div class="card-body">
+                                        <div id="pi-display">Not started</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header bg-success text-white">Sprint</div>
+                                    <div class="card-body">
+                                        <div id="sprint-display">Not started</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">Day</div>
+                                    <div class="card-body">
+                                        <div id="day-display">Not started</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- New Progress Visualization -->
+                        <div class="mb-4">
+                            <h5>SAFe Execution Progress</h5>
+                            <div class="progress mb-2">
+                                <div id="pi-progress-bar" class="progress-bar bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">PI Progress: 0%</div>
+                            </div>
+                            <div class="progress mb-2">
+                                <div id="sprint-progress-bar" class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Sprint Progress: 0%</div>
+                            </div>
+                            <div class="progress mb-2">
+                                <div id="story-completion-bar" class="progress-bar bg-warning" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Story Completion: 0%</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Team Metrics -->
+                        <div class="mb-4">
+                            <h5>Team Metrics</h5>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="card text-center mb-3">
+                                        <div class="card-body">
+                                            <h5 id="velocity-metric">0</h5>
+                                            <p class="card-text">Velocity</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-center mb-3">
+                                        <div class="card-body">
+                                            <h5 id="points-completed-metric">0</h5>
+                                            <p class="card-text">Points Completed</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-center mb-3">
+                                        <div class="card-body">
+                                            <h5 id="impediments-metric">0</h5>
+                                            <p class="card-text">Impediments</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-center mb-3">
+                                        <div class="card-body">
+                                            <h5 id="pi-predictability-metric">N/A</h5>
+                                            <p class="card-text">PI Predictability</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Backlog Visualization -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5>Backlog</h5>
+                                <div class="btn-group">
+                                    <button id="view-pi-scope" class="btn btn-sm btn-outline-primary">PI Scope</button>
+                                    <button id="view-sprint-backlog" class="btn btn-sm btn-outline-success">Sprint Backlog</button>
+                                    <button id="view-full-backlog" class="btn btn-sm btn-outline-secondary">Full Backlog</button>
+                                </div>
+                            </div>
+                            <div id="backlog-container" class="border rounded p-3 bg-light mt-2">
+                                <div id="backlog-items" class="list-group">
+                                    <div class="text-muted">Select a backlog to view</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="latest-activity" class="mb-3">
+                            <h5>Latest Activity</h5>
+                            <div id="activity-content" class="border rounded p-3 bg-light">
+                                <div class="text-muted">No activity yet</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Agent Interaction Panel -->
+                        <div class="mb-4">
+                            <h5>Agent Interactions</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <div class="card-header bg-primary text-white">SAFe Coach</div>
+                                        <div class="card-body">
+                                            <div id="safe-coach-status">Ready</div>
+                                            <button id="ask-safe-coach" class="btn btn-sm btn-outline-primary mt-2">Ask SAFe Coach</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <div class="card-header bg-success text-white">Scrum Master</div>
+                                        <div class="card-body">
+                                            <div id="scrum-master-status">Ready</div>
+                                            <button id="ask-scrum-master" class="btn btn-sm btn-outline-success mt-2">Ask Scrum Master</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <div class="card-header bg-info text-white">Developer</div>
+                                        <div class="card-body">
+                                            <div id="developer-status">Ready</div>
+                                            <button id="ask-developer" class="btn btn-sm btn-outline-info mt-2">Ask Developer</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="latest-response" class="mb-3">
+                            <h5>Agent Response</h5>
+                            <div id="response-content" class="border rounded p-3 bg-light">
+                                <div class="text-muted">No responses yet</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SAFe Demonstration Panel -->
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">SAFe Configuration Demonstrations</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">Select a SAFe configuration to see detailed perspectives from all three agents:</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-info text-white">
+                                        <h5 class="mb-0">Essential SAFe</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul>
+                                            <li>Team and Program levels</li>
+                                            <li>PI Planning</li>
+                                            <li>Agile teams</li>
+                                            <li>System Demo</li>
+                                            <li>Inspect and Adapt</li>
+                                        </ul>
+                                        <button id="demonstrate-essential" class="btn btn-info btn-block mt-3">Demonstrate Essential SAFe</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-success text-white">
+                                        <h5 class="mb-0">Portfolio SAFe</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul>
+                                            <li>Everything in Essential</li>
+                                            <li>Strategic themes</li>
+                                            <li>Portfolio vision</li>
+                                            <li>Portfolio backlog</li>
+                                            <li>Epic owners</li>
+                                        </ul>
+                                        <button id="demonstrate-portfolio" class="btn btn-success btn-block mt-3">Demonstrate Portfolio SAFe</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-warning text-dark">
+                                        <h5 class="mb-0">Full SAFe</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul>
+                                            <li>Everything in Portfolio</li>
+                                            <li>Solution layer</li>
+                                            <li>Multiple ARTs</li>
+                                            <li>Solution management</li>
+                                            <li>Economic framework</li>
+                                        </ul>
+                                        <button id="demonstrate-full" class="btn btn-warning btn-block mt-3">Demonstrate Full SAFe</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="demonstration-results" class="mt-4 d-none">
+                            <div class="alert alert-primary">
+                                <strong id="demonstration-title">Configuration Demonstration</strong>
+                            </div>
+                            
+                            <!-- SAFe Coach Response -->
+                            <div class="card mb-3">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">SAFe Coach Perspective</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="safe-coach-demo-response" class="rendered-markdown"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Scrum Master Response -->
+                            <div class="card mb-3">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Scrum Master Perspective</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="scrum-master-demo-response" class="rendered-markdown"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Developer Response -->
+                            <div class="card mb-3">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Developer Perspective</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="developer-demo-response" class="rendered-markdown"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chain of Thought Demonstration Panel -->
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Chain of Thought Reasoning Demonstration</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">Select an agent and see their step-by-step reasoning process for complex SAFe questions:</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-info text-white">
+                                        <h5 class="mb-0">SAFe Coach</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Demonstrates how a SAFe Coach thinks through program-level challenges and implements SAFe principles.</p>
+                                        <select id="coach-cot-question" class="form-select mb-2">
+                                            <option value="What are the key considerations when scaling from Essential to Portfolio SAFe?">Scaling from Essential to Portfolio SAFe</option>
+                                            <option value="How would you handle resistance to PI Planning from senior leadership?">Handling resistance to PI Planning</option>
+                                            <option value="What metrics should be tracked to measure SAFe implementation success?">Metrics for SAFe success</option>
+                                        </select>
+                                        <button id="demonstrate-coach-cot" class="btn btn-info btn-block">Show SAFe Coach Reasoning</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-success text-white">
+                                        <h5 class="mb-0">Scrum Master</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Demonstrates how a Scrum Master reasons through team facilitation and removes impediments.</p>
+                                        <select id="scrum-master-cot-question" class="form-select mb-2">
+                                            <option value="How would you facilitate a challenging Sprint Planning session?">Facilitating challenging Sprint Planning</option>
+                                            <option value="What's your approach to resolving conflicts between team members?">Resolving team conflicts</option>
+                                            <option value="How would you help a team struggling with technical debt?">Addressing technical debt</option>
+                                        </select>
+                                        <button id="demonstrate-scrum-master-cot" class="btn btn-success btn-block">Show Scrum Master Reasoning</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-warning text-dark">
+                                        <h5 class="mb-0">Developer</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Demonstrates how a Developer analyzes technical challenges and applies Agile engineering practices.</p>
+                                        <select id="developer-cot-question" class="form-select mb-2">
+                                            <option value="How would you approach breaking down a complex feature into stories?">Breaking down complex features</option>
+                                            <option value="What considerations go into providing accurate story estimates?">Providing accurate estimates</option>
+                                            <option value="How do you balance new feature development with addressing technical debt?">Balancing features vs. technical debt</option>
+                                        </select>
+                                        <button id="demonstrate-developer-cot" class="btn btn-warning btn-block">Show Developer Reasoning</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="cot-results" class="mt-4 d-none">
+                            <div class="alert alert-primary">
+                                <strong id="cot-title">Chain of Thought Demonstration</strong>
+                            </div>
+                            
+                            <div class="card mb-3">
+                                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0" id="cot-agent-type">Agent Reasoning Process</h5>
+                                    <span id="cot-status" class="badge bg-info">Thinking...</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <h6 class="text-primary">Question:</h6>
+                                        <div id="cot-question" class="p-2 bg-light rounded"></div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h6 class="text-primary">Step-by-Step Reasoning:</h6>
+                                        <div id="cot-thinking-steps" class="reasoning-steps">
+                                            <!-- Reasoning steps will be dynamically inserted here -->
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <h6 class="text-primary">Conclusion:</h6>
+                                        <div id="cot-conclusion" class="p-2 bg-light rounded rendered-markdown"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SAFe Configurations Panel with All Agent Explanations -->
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">SAFe Configurations Comparison</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">Select a SAFe configuration to see a detailed step-by-step explanation from all three agents:</p>
+                        
+                        <div class="mb-4">
+                            <div class="btn-group w-100 mb-3" role="group" aria-label="SAFe Configurations">
+                                <button type="button" class="btn btn-outline-primary config-btn" data-config="big_picture">Big Picture</button>
+                                <button type="button" class="btn btn-outline-primary config-btn" data-config="core_competencies">Core Competencies</button>
+                                <button type="button" class="btn btn-outline-primary config-btn" data-config="essential">Essential</button>
+                                <button type="button" class="btn btn-outline-primary config-btn" data-config="large_solution">Large Solution</button>
+                                <button type="button" class="btn btn-outline-primary config-btn" data-config="portfolio">Portfolio</button>
+                                <button type="button" class="btn btn-outline-primary config-btn" data-config="full">Full</button>
+                            </div>
+                        </div>
+                        
+                        <div id="config-image-container" class="mb-4 text-center d-none">
+                            <h5 id="config-title" class="mb-3">Configuration Name</h5>
+                            <div class="position-relative">
+                                <img id="config-image" src="" alt="SAFe Configuration" class="img-fluid rounded shadow-sm" style="max-width:100%; max-height:500px;">
+                                <div id="config-loading" class="position-absolute top-50 start-50 translate-middle">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="config-explanation" class="d-none">
+                            <ul class="nav nav-tabs" id="configTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="coach-tab" data-bs-toggle="tab" data-bs-target="#coach-content" type="button" role="tab" aria-controls="coach-content" aria-selected="true">
+                                        <i class="bi bi-person-workspace"></i> SAFe Coach
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="sm-tab" data-bs-toggle="tab" data-bs-target="#sm-content" type="button" role="tab" aria-controls="sm-content" aria-selected="false">
+                                        <i class="bi bi-people"></i> Scrum Master
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="dev-tab" data-bs-toggle="tab" data-bs-target="#dev-content" type="button" role="tab" aria-controls="dev-content" aria-selected="false">
+                                        <i class="bi bi-code-square"></i> Developer
+                                    </button>
+                                </li>
+                            </ul>
+                            
+                            <div class="tab-content pt-3" id="configTabContent">
+                                <!-- SAFe Coach Tab -->
+                                <div class="tab-pane fade show active" id="coach-content" role="tabpanel" aria-labelledby="coach-tab">
+                                    <div class="card">
+                                        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-0">SAFe Coach Perspective</h5>
+                                            <span id="coach-status" class="badge bg-secondary">Loading...</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <h6 class="text-primary">Step-by-Step Analysis:</h6>
+                                            <div id="coach-thinking" class="reasoning-steps">
+                                                <div class="text-center">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <h6 class="text-primary mt-4">Conclusion:</h6>
+                                            <div id="coach-conclusion" class="p-3 bg-light rounded">
+                                                <div class="text-center">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Scrum Master Tab -->
+                                <div class="tab-pane fade" id="sm-content" role="tabpanel" aria-labelledby="sm-tab">
+                                    <div class="card">
+                                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-0">Scrum Master Perspective</h5>
+                                            <span id="sm-status" class="badge bg-secondary">Loading...</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <h6 class="text-primary">Step-by-Step Analysis:</h6>
+                                            <div id="sm-thinking" class="reasoning-steps">
+                                                <div class="text-center">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <h6 class="text-primary mt-4">Conclusion:</h6>
+                                            <div id="sm-conclusion" class="p-3 bg-light rounded">
+                                                <div class="text-center">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Developer Tab -->
+                                <div class="tab-pane fade" id="dev-content" role="tabpanel" aria-labelledby="dev-tab">
+                                    <div class="card">
+                                        <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-0">Developer Perspective</h5>
+                                            <span id="dev-status" class="badge bg-secondary">Loading...</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <h6 class="text-primary">Step-by-Step Analysis:</h6>
+                                            <div id="dev-thinking" class="reasoning-steps">
+                                                <div class="text-center">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <h6 class="text-primary mt-4">Conclusion:</h6>
+                                            <div id="dev-conclusion" class="p-3 bg-light rounded">
+                                                <div class="text-center">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Communication Panel -->
+                <div id="communication-panel" class="card mb-4 d-none">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="bi bi-chat-dots"></i> Agent Communications</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Message</th>
+                                        <th>PI</th>
+                                        <th>Sprint</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="communications-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center">No communications yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Events Panel -->
+                <div id="events-panel" class="card mb-4 d-none">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="bi bi-calendar-event"></i> Event Log</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Event Type</th>
+                                        <th>Description</th>
+                                        <th>PI</th>
+                                        <th>Sprint</th>
+                                        <th>Day</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="events-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center">No events yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for displaying detailed responses -->
+    <div class="modal fade" id="responseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="responseModalTitle">Agent Response</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="responseModalBody">
+                    <!-- Content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/config_images.js') }}"></script>
+</body>
+</html>

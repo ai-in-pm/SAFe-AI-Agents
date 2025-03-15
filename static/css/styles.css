@@ -1,0 +1,172 @@
+/* SAFe AI Agents Simulation Styles */
+
+/* Base Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    font-weight: 600;
+}
+
+/* Navigation */
+.nav-item .nav-link {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.nav-item .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 0.25rem;
+}
+
+/* Status Panel */
+#status-panel {
+    border-left: 4px solid #0d6efd;
+}
+
+#simulation-status {
+    font-weight: 500;
+}
+
+/* Agent Cards */
+.agent-card {
+    transition: transform 0.2s;
+}
+
+.agent-card:hover {
+    transform: translateY(-5px);
+}
+
+.agent-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Event Log */
+.event-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.event-row:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Communication Log */
+.message-content {
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.expand-message {
+    color: #0d6efd;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-decoration: underline;
+}
+
+/* Animation for activity updates */
+@keyframes highlight {
+    0% { background-color: rgba(13, 110, 253, 0.1); }
+    100% { background-color: transparent; }
+}
+
+.highlight-animation {
+    animation: highlight 2s ease-out;
+}
+
+/* SAFe-specific styling */
+.pi-box {
+    border: 2px solid #0d6efd;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.sprint-box {
+    border: 2px solid #198754;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.day-box {
+    border: 2px solid #0dcaf0;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-outline-primary {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* Markdown rendered content */
+.rendered-markdown h1 {
+    font-size: 1.5rem;
+}
+
+.rendered-markdown h2 {
+    font-size: 1.3rem;
+}
+
+.rendered-markdown h3 {
+    font-size: 1.2rem;
+}
+
+.rendered-markdown h4 {
+    font-size: 1.1rem;
+}
+
+.rendered-markdown ul, 
+.rendered-markdown ol {
+    padding-left: 1.5rem;
+}
+
+.rendered-markdown code {
+    background-color: #f0f0f0;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+}
+
+.rendered-markdown pre {
+    background-color: #f0f0f0;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .col-md-3, .col-md-9 {
+        padding: 0 0.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem 0.75rem;
+    }
+}

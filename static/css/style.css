@@ -1,0 +1,213 @@
+/* SAFe AI Agents Custom Styles */
+
+/* General styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navigation styles */
+.nav-item .active {
+    font-weight: bold;
+}
+
+/* Card styles */
+.card {
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    border-top-left-radius: 0.5rem !important;
+    border-top-right-radius: 0.5rem !important;
+}
+
+/* Simulation status boxes */
+.pi-box, .sprint-box, .day-box {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.pi-box {
+    background-color: #007bff;
+    color: white;
+}
+
+.sprint-box {
+    background-color: #28a745;
+    color: white;
+}
+
+.day-box {
+    background-color: #17a2b8;
+    color: white;
+}
+
+/* Progress bars */
+.progress {
+    height: 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+}
+
+.progress-bar {
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+/* Metrics box */
+.metric-box {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    text-align: center;
+    height: 100%;
+}
+
+.metric-box h5 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.metric-box .metric-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Agent status indicators */
+.agent-status {
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+}
+
+/* Chain of Thought Reasoning styles */
+.reasoning-steps {
+    counter-reset: step-counter;
+}
+
+.reasoning-step {
+    position: relative;
+    padding: 1rem 1rem 1rem 3rem;
+    border-left: 3px solid #007bff;
+    margin-bottom: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.reasoning-step.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reasoning-step::before {
+    content: counter(step-counter);
+    counter-increment: step-counter;
+    position: absolute;
+    left: 0.75rem;
+    top: 1rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.reasoning-step:last-child {
+    margin-bottom: 0;
+}
+
+/* Animation for step-by-step reasoning */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Styles for loading spinner */
+.thinking-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    border: 0.2rem solid rgba(0, 123, 255, 0.2);
+    border-top-color: #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* SAFe Configuration Styles */
+.reasoning-steps {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+}
+
+.reasoning-step {
+    padding: 10px;
+    border-left: 3px solid #0d6efd;
+    margin-bottom: 10px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.config-btn.active {
+    background-color: #0d6efd;
+    color: white;
+}
+
+#config-image {
+    transition: all 0.3s ease;
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.tab-pane {
+    animation: fadeEffect 0.5s;
+}
+
+@keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .metric-box {
+        margin-bottom: 1rem;
+    }
+    
+    .reasoning-step {
+        padding-left: 2.5rem;
+    }
+    
+    .reasoning-step::before {
+        left: 0.5rem;
+    }
+}
